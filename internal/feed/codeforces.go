@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/rand"
 	"net/http"
+	"slices"
 	"time"
 )
 
@@ -28,7 +29,7 @@ type APIResponse struct {
 }
 
 // FetchRandomProblem fetches a random problem based on difficulty & tags
-func FetchRandomProblem(tags []string, minRating, maxRating int) (*Problem, error) {
+func FetchRandomProblem(tags []string, exludedTags []string, minRating, maxRating int) (*Problem, error) {
 	resp, err := http.Get(codeforcesAPI)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch problems: %v", err)
@@ -45,14 +46,23 @@ func FetchRandomProblem(tags []string, minRating, maxRating int) (*Problem, erro
 	var filtered []Problem
 	for _, problem := range data.Result.Problems {
 		if problem.Rating >= minRating && problem.Rating <= maxRating {
+            includeProblem := false;
 			for _, tag := range tags {
-				for _, pTag := range problem.Tags {
-					if tag == pTag {
-						filtered = append(filtered, problem)
-						break
-					}
-				}
+                if( slices.Contains(problem.Tags, tag) ) {
+                    includeProblem = true;
+                    break
+                }
 			}
+			for _, tag := range exludedTags {
+                if( slices.Contains(problem.Tags, tag) ) {
+                    includeProblem = false;
+                    break;
+                }
+			}
+
+            if(includeProblem) {
+                filtered = append(filtered, problem)
+            }
 		}
 	}
 

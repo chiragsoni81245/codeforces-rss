@@ -8,20 +8,33 @@ import (
 
 // Config struct holds user preferences
 type Config struct {
-	Tags      []string
-	MinRating int
-	MaxRating int
+    API_KEY      string
+	Tags         []string
+	ExcludedTags []string
+	MinRating    int
+	MaxRating    int
 }
 
 // LoadConfig loads the configuration from environment variables or `config.json`
-func LoadConfig() (*Config) {
+func LoadConfig() *Config {
 	var cfg Config
+
+	if apiKey, exists := os.LookupEnv("CF_API_KEY"); exists {
+		cfg.API_KEY = apiKey 
+	}
 
 	// Try to read from environment variables
 	if tags, exists := os.LookupEnv("CF_TAGS"); exists {
 		cfg.Tags = strings.Split(tags, ",")
 	} else {
-		cfg.Tags = []string{"dp", "graphs"} // Default
+		cfg.Tags = []string{"graphs", "trees"} // Default
+	}
+
+	// Try to read from environment variables
+	if tags, exists := os.LookupEnv("CF_EXCLUDED_TAGS"); exists {
+		cfg.ExcludedTags = strings.Split(tags, ",")
+	} else {
+		cfg.ExcludedTags = []string{"dp"} // Default
 	}
 
 	if minRating, exists := os.LookupEnv("CF_MIN_RATING"); exists {
@@ -38,4 +51,3 @@ func LoadConfig() (*Config) {
 
 	return &cfg
 }
-

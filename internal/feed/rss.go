@@ -7,9 +7,9 @@ import (
 )
 
 // GenerateRSS generates an RSS feed with a random Codeforces question
-func GenerateRSS(tags []string, minRating, maxRating int) (string, error) {
+func GenerateRSS(tags []string, excludedTags []string, minRating, maxRating int) (string, error) {
 	// Fetch a problem
-	problem, err := FetchRandomProblem(tags, minRating, maxRating)
+	problem, err := FetchRandomProblem(tags, excludedTags, minRating, maxRating)
 	if err != nil {
 		return "", err
 	}
