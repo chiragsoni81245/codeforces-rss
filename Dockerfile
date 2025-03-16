@@ -1,18 +1,18 @@
 # Use a minimal Go image
-FROM golang:1.21-alpine AS builder
+FROM golang:alpine AS builder
 
 # Set working directory inside the container
 WORKDIR /app
 
 # Copy go modules and install dependencies
 COPY go.mod go.sum ./
-RUN go mod download
+RUN go mod tidy
 
 # Copy source files
 COPY . .
 
 # Build the binary
-RUN go build -o codeforces-rss ./cmd/rss-server/main.go
+RUN go build -o codeforces-rss ./cmd/codeforces-rss/main.go
 
 # Use a small base image for the final container
 FROM alpine:latest
