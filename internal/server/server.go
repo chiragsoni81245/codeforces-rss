@@ -16,7 +16,7 @@ func StartServer() {
 
 	// RSS Endpoint
 	router.GET("/rss", func(c *gin.Context) {
-		rss, err := feed.GenerateRSS(config.Tags, config.MinRating, config.MaxRating)
+		rss, err := feed.GenerateRSS(config.Tags, config.ExcludedTags, config.MinRating, config.MaxRating)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
